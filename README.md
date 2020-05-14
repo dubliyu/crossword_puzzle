@@ -43,4 +43,4 @@ And of course to Project Gutenberg for putting up the webster dictionary in the 
 
 ## Licence
 Dictionary and Project Gutenburg have their licences.
-My code is udner MIT.
+My code is under MIT.
