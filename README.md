@@ -28,11 +28,14 @@ The grid with the highest number of total points is the chosen one.
 
 ## Run
 Expects 4 Arguments:
-1. # of crossword grids to generate
-2. # number of words in each puzzle
-3. # max size of grid
-4. # how many grids to test before picking one
-Example: `python ./GridWorld.py 2 20 40 3")`
+1. Number of crossword grids to generate
+2. Number of words in each puzzle
+3. Max size of grid
+4. Number of how many grids to test before picking one
+Example: 
+```python
+python ./GridWorld.py 2 20 40 3")
+```
 
 ## Credit
 Much credit to adambom for his dictionary respoitory [found here](https://github.com/adambom/dictionary).
