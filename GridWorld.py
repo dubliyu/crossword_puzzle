@@ -1,6 +1,7 @@
 import random
 import json
 import copy
+import sys
 
 # Class Representing GridWorld
 class GridWorld:
@@ -348,43 +349,54 @@ def add_word_to_grid(word, world):
 
 
 def main():
-	# Get word list
-	word_count = 20
+	# Process arguments
+	if len(sys.argv) < 5:
+		print("Expecting 4 Arguments:")
+		print("1 - # of crossword grids to generate")
+		print("2 - # number of words in each puzzle")
+		print("3 - # max size of grid")
+		print("4 - # how many grids to test before picking one")
+		print("Example: python ./GridWorld.py 2 20 40 3")
+		return
+	
+	num_grids = int(sys.argv[1])
+	word_count = int(sys.argv[2])
+	grid_size = int(sys.argv[3])
+	attempts = int(sys.argv[4])
 	dictionary = CrossWordDict()
-	word_list_and_hints = dictionary.select_random(word_count)
 
-	# Get number of grids to generate
-	num_grids = 1
-
-	# Get grid Size
-	size = 40
-
-	# Generate grids
-	grids = []
+	# For Each grid
 	for x in range(num_grids):
 
-		# Shuffle the word list
-		random.shuffle(word_list_and_hints)
+		# Perpare grid data
+		word_list_and_hints = dictionary.select_random(word_count)
+		grids = []
 
-		# Create and new grid and add the words
-		grid = GridWorld(size)
-		for word in word_list_and_hints:
-			add_word_to_grid(word, grid)
-		grids.append(grid)
+		for y in range(attempts):
 
-	# Select grid with most points
-	if len(grids) == 0:
-		print("No grids could be generated")
-		return
+			# Shuffle the word list
+			random.shuffle(word_list_and_hints)
 
-	best_grid = grids[0]
-	for grid in grids:
-		if best_grid.total_points < grid.total_points:
-			best_grid = grid
+			# Create and new grid and add the words
+			grid = GridWorld(grid_size)
+			for word in word_list_and_hints:
+				add_word_to_grid(word, grid)
+			grids.append(grid)
 
-	# Save grid
-	best_grid.print_grid_solution()
-	best_grid.print_grid_game()
+		# Select grid with most points
+		if len(grids) == 0:
+			print("No grids could be generated")
+			continue
+		best_grid = grids[0]
+		for grid in grids:
+			if best_grid.total_points < grid.total_points:
+				best_grid = grid
+
+		# Save grid
+		best_grid.print_grid_solution()
+		best_grid.print_grid_game()
+		print()
+		print()
 
 if __name__ == "__main__":
     main()
