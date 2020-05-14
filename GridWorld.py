@@ -1,5 +1,6 @@
 import random
 import json
+import copy
 
 # Class Representing GridWorld
 class GridWorld:
@@ -20,21 +21,86 @@ class GridWorld:
 		self.grid = new_grid
 
 	def print_grid_solution(self):
-		print("-" * (self.size * 2 + 1))
-		for i in self.grid:
+		self.print_grid(self.grid)
+
+	def print_grid(self, grid):
+		print("-" * (len(grid[0]) * (len(grid[0][0]) + 1) + 1))
+		for i in grid:
 			row = "|"
 			for j in i:
 				row += j + "|"
 			print(row)
-		print("-" * (self.size * 2 + 1))
+		print("-" * (len(grid[0]) * (len(grid[0][0]) + 1) + 1))
 
 	def print_grid_game(self):
-		for i in range(len(self.placed_words)):
-			#l = str(i) + ": "
-			#l += str(len(self.placed_words[i].word)) + " letter word, "
-			# += self.placed_words[i].hint
-			#print(l) 
-			print(self.placed_words[i].word)
+
+		# Mark start locations and Expand
+		grid = copy.deepcopy(self.grid)
+		visible_index = {}
+		for i in range(len(grid)):
+			for j in range(len(grid[i])):
+				if grid[i][j] != " ":
+					isStart = False
+					index = 0
+					for k in self.placed_words:
+						if k.row == i and k.col == j:
+							if index < 10:
+								grid[i][j] = "0" +  str(index)
+							else:
+								grid[i][j] = str(index)
+							visible_index[str(i) + str(j)] = index
+							isStart = True
+							break
+						index += 1
+
+					if not isStart:
+						grid[i][j] = "██"
+				else:
+					grid[i][j] = "  "
+
+		# clean board rows
+		tmp = []
+		for i in grid:
+			isEmpty = True
+			for j in i:
+				if j != "  ":
+					isEmpty = False
+			if isEmpty:
+				tmp.append(i)
+		for t in tmp:
+			grid.remove(t)
+
+		# clean board columns
+		tmp.clear()
+		col_size = len(grid[0])
+		for i in range(col_size):
+			isEmpty = True
+			for j in range(len(grid)):
+				if grid[j][i] != "  ":
+					isEmpty = False
+			if isEmpty:
+				tmp.append(i)
+		tmp.reverse()
+		for t in tmp:
+			for k in range(len(grid)):
+				del grid[k][t]
+
+		# Print solution grid
+		self.print_grid(grid)
+
+		# Print Hints
+		print("--- Numbers are meant to be filled in too ---")
+		for w in self.placed_words:
+			index = visible_index[str(w.row) + str(w.col)]
+			l = str(index) 
+			if w.direction == "DOWN":
+				l += " (DOWN) "
+			else:
+				l += " (ACCROSS) "
+			l +=": "
+			l += str(len(w.word)) + " letter word, " 
+			l += w.hint
+			print(l) 
 
 	def get_cell(self, placement, offset):
 		row = placement.row
@@ -283,8 +349,9 @@ def add_word_to_grid(word, world):
 
 def main():
 	# Get word list
+	word_count = 20
 	dictionary = CrossWordDict()
-	word_list_and_hints = dictionary.select_random(40)
+	word_list_and_hints = dictionary.select_random(word_count)
 
 	# Get number of grids to generate
 	num_grids = 1
