@@ -34,7 +34,7 @@ Expects 4 Arguments:
 4. Number of how many grids to test before picking one
 Example: 
 ```python
-python ./GridWorld.py 2 20 40 3")
+python ./GridWorld.py 2 20 40 3
 ```
 
 ## Credit
